@@ -1,0 +1,9 @@
+login- 
+Client to server: {"action":"login", "username":...}
+Server to client: {game dict}
+
+setup-
+Client to server: {"player":player_num, "action":"setup", "board":{Board dictionary}}
+
+game-
+Client to server: {"action":"get" | "play"}
