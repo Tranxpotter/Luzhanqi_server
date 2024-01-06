@@ -10,10 +10,12 @@ ENGINEER = 1
 BOMB = 10
 LANDMINE = 11
 FLAG = 12
+ENEMY = 13
+
 
 class Piece:
     '''Represents a playing piece
-    
+
     Attributes
     -----------
     owner `int`:
@@ -22,10 +24,8 @@ class Piece:
         Name of the piece
     value `int`:
         From 1-12, represents the type of the piece'''
-    def __init__(self, owner:int, name:str, value:int) -> None:
+
+    def __init__(self, owner: int, name: str, value: int) -> None:
         self.owner = owner
         self.name = name
         self.value = value
-    
-    
-    

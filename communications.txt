@@ -1,9 +1,18 @@
 login- 
 Client to server: {"action":"login", "username":...}
-Server to client: {game dict}
+Server to client: {"player_num":player_num, "game":game dict}
 
 setup-
-Client to server: {"player":player_num, "action":"setup", "board":{Board dictionary}}
+Client to server: {"player_num":player_num, "action":"setup", "board":{Board dictionary}}
+Server to client: {game dict}
 
 game-
-Client to server: {"action":"get" | "play"}
+Client to server: {"player_num":player_num, "action":"get" | "play"}
+Server to client: {game dict}
+
+game dict-
+{"state":game state, "players":players' names, "turn":the turn of the game, "your_state":Your player state}
+depending on your_state:
+WAITING: {}
+SETTING_UP: {"board":board, "player_states":players' states}
+READY: {"player_states":players' states}

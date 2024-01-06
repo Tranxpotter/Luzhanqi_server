@@ -37,7 +37,7 @@ async def handler(conn:websockets.WebSocketServerProtocol):
     
     username = str(data["username"])
 
-    if games[-1] and games[-1].state == game.WAITING:
+    if games and games[-1] and games[-1].state == game.WAITING:
         #Join an existing game
         player_num = games[-1].join(username)
     else:
@@ -52,12 +52,15 @@ async def handler(conn:websockets.WebSocketServerProtocol):
         return
     
     joined_game = games[-1]
+    await conn.send(json.dumps({"player_num":player_num, "game":joined_game.get(player_num)}))
+
 
     async for raw_data in conn:
         if joined_game not in games:
             await conn.close()
             break
         data = json.loads(raw_data)
+        print(data)
         
     
     try:
