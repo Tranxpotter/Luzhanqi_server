@@ -20,7 +20,6 @@ async def handler(conn:websockets.WebSocketServerProtocol):
     try:
         raw_data = await conn.recv()
     except:
-        await conn.close(reason="Did not receive data")
         return
     
     data:dict = json.loads(raw_data)
@@ -55,10 +54,11 @@ async def handler(conn:websockets.WebSocketServerProtocol):
     joined_game = games[-1]
 
     async for raw_data in conn:
-        data = json.loads(raw_data)
         if joined_game not in games:
             await conn.close()
             break
+        data = json.loads(raw_data)
+        
     
     try:
         games.remove(joined_game)

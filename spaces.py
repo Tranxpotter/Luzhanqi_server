@@ -43,15 +43,15 @@ class Space:
                 raise TypeError(f"Invalid linkage '{linkage}'")
         self.linkages = linkages
     
-    def add_linkage(self, linkage:tuple):
+    def add_linkage(self, space, linkage:int):
         '''Used to add linkages between this space and other spaces
         
         Parameters
         ----------
         linkages: `list`[`tuple`[`Space`, Linkage `int`]]'''
-        if not isinstance(linkage[0], Space):
+        if not isinstance(space, Space):
             raise TypeError("Invalid space argument type")
-        if not isinstance(linkage[1], int) and linkage[1] != NORMAL_LINKAGE and linkage[1] != RAIL_LINKAGE:
+        if not isinstance(linkage, int) and linkage != NORMAL_LINKAGE and linkage != RAIL_LINKAGE:
             raise TypeError(f"Invalid linkage '{linkage}'")
         
-        self.linkages.append(linkage)
+        self.linkages.append((space, linkage))
