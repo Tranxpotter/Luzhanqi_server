@@ -54,13 +54,20 @@ async def handler(conn:websockets.WebSocketServerProtocol):
     joined_game = games[-1]
     await conn.send(json.dumps({"player_num":player_num, "game":joined_game.get(player_num)}))
 
-
-    async for raw_data in conn:
-        if joined_game not in games:
-            await conn.close()
-            break
-        data = json.loads(raw_data)
-        print(data)
+    try:
+        async for raw_data in conn:
+            if joined_game not in games:
+                await conn.close()
+                break
+            data = json.loads(raw_data)
+            action = data.get("action")
+            if action:
+                if action == "get":
+                    game_info = joined_game.get(player_num)
+                    print(game_info)
+                    await conn.send(json.dumps(game_info))
+    except websockets.ConnectionClosedError as e:
+        print(e)
         
     
     try:
