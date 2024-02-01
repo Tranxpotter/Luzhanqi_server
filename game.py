@@ -43,7 +43,7 @@ class Game:
         if state == WAITING:
             return self.info_dict() | {"your_state":state}
         if state == SETTING_UP:
-            return self.info_dict() | {"board":self.players_info[player_num]["board"].send_board(), "player_states":[player_info["state"] for player_num, player_info in sorted(self.players_info.items(), key=lambda x:x[0])], "your_state":state}
+            return self.info_dict() | {"board":self.players_info[player_num]["board"].send_board(player_num)[1], "player_states":[player_info["state"] for player_num, player_info in sorted(self.players_info.items(), key=lambda x:x[0])], "your_state":state}
         if state == READY:
             return self.info_dict() | {"player_states":[player_info["state"] for player_num, player_info in sorted(self.players_info.items(), key=lambda x:x[0])], "your_state":state}
         return {}
