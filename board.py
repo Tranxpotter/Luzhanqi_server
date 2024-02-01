@@ -12,8 +12,8 @@ class PlayerBoard:
             if space.id == id:
                 return space
 
-    def send_board(self) -> list[tuple[int, int]]:
-        return [space.send_space(self.player) for space in self.spaces]
+    def send_board(self, player_num:int) -> tuple[int, list[tuple[int, int, int]]]:
+        return self.player, [space.send_space(player_num) for space in self.spaces]
 
 
 class EmptyPlayerBoard(PlayerBoard):
@@ -95,30 +95,29 @@ class EmptyPlayerBoard(PlayerBoard):
 class Board:
     def __init__(self, boards: list[PlayerBoard]) -> None:
         self.boards = boards
+        self.connecting_spaces:list[Space] = []
+
+
         self.boards.sort(key=lambda board: board.player)
         # 2 player board joining
         if len(boards) == 2:
             between_board_links = [(1, 5), (3, 3), (5, 1)]
-            for link in between_board_links:
+            for count, link in enumerate(between_board_links):
+                frontline_space = Space(count + 1, POST, None)
+                self.connecting_spaces.append(frontline_space)
                 joining = boards[0].find_space(
                     link[0]), boards[1].find_space(link[1])
                 if joining[0] and joining[1]:
-                    joining[0].add_linkage(joining[1], RAIL_LINKAGE)
-                    joining[1].add_linkage(joining[0], RAIL_LINKAGE)
+                    joining[0].add_linkage(frontline_space, RAIL_LINKAGE)
+                    joining[1].add_linkage(frontline_space, RAIL_LINKAGE)
 
         else:
             raise NotImplementedError(
                 "More than 2 players not yet implemented")
 
-    def send_board(self, player_num: int) -> list[tuple[int, int]]:
-        return_board = []
-        if len(self.boards) == 2:
-            return_board += [space.send_space(player_num) for space in reversed(
-                self.boards[1 if player_num == 2 else 2].spaces)]
-            return_board += [space.send_space(player_num)
-                             for space in self.boards[player_num].spaces]
-        else:
-            raise NotImplementedError(
-                "More than 2 players not yet implemented")
+    def send_board(self, player_num: int) -> tuple[list, list]:
+        return [board.send_board(player_num) for board in self.boards], [space.send_space(player_num) for space in self.connecting_spaces]
 
-        return return_board
+
+        
+

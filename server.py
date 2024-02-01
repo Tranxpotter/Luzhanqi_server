@@ -64,8 +64,12 @@ async def handler(conn:websockets.WebSocketServerProtocol):
             if action:
                 if action == "get":
                     game_info = joined_game.get(player_num)
-                    print(game_info)
                     await conn.send(json.dumps(game_info))
+                
+
+                else:
+                    await conn.send(json.dumps({}))
+    
     except websockets.ConnectionClosedError as e:
         print(e)
         
