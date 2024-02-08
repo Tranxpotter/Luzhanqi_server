@@ -59,10 +59,10 @@ class Space:
 
         self.linkages.append((space, linkage))
 
-    def send_space(self, player_num: int) -> tuple[int, int, int]:
+    def send_space(self, player_num: int) -> tuple[int, int, int|None]:
         if self.piece and self.piece.owner != player_num:
             return (self.id, self.type, pieces.ENEMY)
         elif self.piece:
             return (self.id, self.type, self.piece.value)
         else:
-            return (self.id, self.type, 0)
+            return (self.id, self.type, None)

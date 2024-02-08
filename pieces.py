@@ -25,7 +25,6 @@ class Piece:
     value `int`:
         From 1-12, represents the type of the piece'''
 
-    def __init__(self, owner: int, name: str, value: int) -> None:
+    def __init__(self, owner: int, value: int) -> None:
         self.owner = owner
-        self.name = name
         self.value = value

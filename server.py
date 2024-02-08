@@ -66,6 +66,13 @@ async def handler(conn:websockets.WebSocketServerProtocol):
                     game_info = joined_game.get(player_num)
                     await conn.send(json.dumps(game_info))
                 
+                elif action == "setup":
+                    try:
+                        joined_game.setup(player_num, data["space_ids"], data["piece_values"])
+                    except Exception as e:
+                        print(e)
+                
+                
 
                 else:
                     await conn.send(json.dumps({}))

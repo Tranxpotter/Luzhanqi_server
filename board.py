@@ -12,7 +12,7 @@ class PlayerBoard:
             if space.id == id:
                 return space
 
-    def send_board(self, player_num:int) -> tuple[int, list[tuple[int, int, int]]]:
+    def send_board(self, player_num:int) -> tuple[int, list[tuple[int, int, int|None]]]:
         return self.player, [space.send_space(player_num) for space in self.spaces]
 
 

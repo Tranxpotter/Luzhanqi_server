@@ -6,6 +6,7 @@ PLAYING = 2
 READY = 3
 
 from board import PlayerBoard, EmptyPlayerBoard, Board
+from pieces import Piece
 
 
 class Game:
@@ -33,6 +34,11 @@ class Game:
         for player_num in self.players_info:
             self.players_info[player_num]["state"] = SETTING_UP
 
+    def setup(self, player_num:int, space_ids, piece_values):
+        for space_id, piece_value in zip(space_ids, piece_values):
+            piece:Piece|None = Piece(player_num, piece_value) if piece_values else None
+            self.players_info[player_num]["board"].find_space(space_id).piece = piece
+    
 
 
     def play(self):
