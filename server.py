@@ -72,7 +72,8 @@ async def handler(conn:websockets.WebSocketServerProtocol):
                     except Exception as e:
                         print(e)
                 
-                
+                elif action == "ready":
+                    joined_game.ready(player_num)
 
                 else:
                     await conn.send(json.dumps({}))

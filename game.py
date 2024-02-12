@@ -39,7 +39,12 @@ class Game:
             piece:Piece|None = Piece(player_num, piece_value) if piece_values else None
             self.players_info[player_num]["board"].find_space(space_id).piece = piece
     
-
+    def ready(self, player_num:int):
+        self.players_info[player_num]["state"] = READY
+        if all(map(lambda x:x["state"] == READY, self.players_info.values())):  #Check if all players are ready
+            for player_info in self.players_info.values():
+                player_info["state"] = PLAYING
+            self.board = Board([player_board for player_board in map(lambda x:x["board"], self.players_info.values())])
 
     def play(self):
         ...
@@ -52,6 +57,11 @@ class Game:
             return self.info_dict() | {"board":self.players_info[player_num]["board"].send_board(player_num)[1], "player_states":[player_info["state"] for player_num, player_info in sorted(self.players_info.items(), key=lambda x:x[0])], "your_state":state}
         if state == READY:
             return self.info_dict() | {"player_states":[player_info["state"] for player_num, player_info in sorted(self.players_info.items(), key=lambda x:x[0])], "your_state":state}
+        if state == PLAYING:
+            if not self.board:
+                print("Board not set up!!!")
+                return self.info_dict()
+            return self.info_dict() | {"turn":self.turn, "board":self.board.send_board(player_num)}
         return {}
     
     def info_dict(self) -> dict:
