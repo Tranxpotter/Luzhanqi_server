@@ -110,14 +110,23 @@ class Board:
                 if joining[0] and joining[1]:
                     joining[0].add_linkage(frontline_space, RAIL_LINKAGE)
                     joining[1].add_linkage(frontline_space, RAIL_LINKAGE)
+                    frontline_space.add_linkage(joining[0], RAIL_LINKAGE)
+                    frontline_space.add_linkage(joining[1], RAIL_LINKAGE)
 
         else:
             raise NotImplementedError(
                 "More than 2 players not yet implemented")
 
     def send_board(self, player_num: int) -> tuple[list, list]:
-        return [board.send_board(player_num) for board in self.boards], [space.send_space(player_num) for space in self.connecting_spaces]
+        return [board.send_board(player_num) for board in sorted(self.boards, key = lambda x:x.player)], [space.send_space(player_num) for space in self.connecting_spaces]
 
-
+    def find_space(self, board:int, id:int) -> Space|None:
+        if board == 3:
+            for space in self.connecting_spaces:
+                if space.id == id:
+                    return space
+        elif board == 2 or board == 1:
+            return self.boards[board-1].find_space(id)
+        return None
         
 

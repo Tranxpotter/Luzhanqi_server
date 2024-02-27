@@ -1,12 +1,17 @@
 WAITING = 0
 SETTING_UP = 1
 PLAYING = 2
+END = 4
 
 #Player only states
 READY = 3
 
 from board import PlayerBoard, EmptyPlayerBoard, Board
+import pieces as pieces_mod
 from pieces import Piece
+import spaces as spaces_mod
+from spaces import Space
+
 
 
 class Game:
@@ -36,7 +41,7 @@ class Game:
 
     def setup(self, player_num:int, space_ids, piece_values):
         for space_id, piece_value in zip(space_ids, piece_values):
-            piece:Piece|None = Piece(player_num, piece_value) if piece_values else None
+            piece:Piece|None = Piece(player_num, piece_value) if piece_value else None
             self.players_info[player_num]["board"].find_space(space_id).piece = piece
     
     def ready(self, player_num:int):
@@ -45,9 +50,137 @@ class Game:
             for player_info in self.players_info.values():
                 player_info["state"] = PLAYING
             self.board = Board([player_board for player_board in map(lambda x:x["board"], self.players_info.values())])
+            self.state = PLAYING
 
-    def play(self):
-        ...
+    def play(self, player_num:int, origin:list[int], destination:list[int]):
+        if self.state == END:
+            return
+        
+        if player_num != self.turn:
+            return
+        origin_board, origin_space_id = origin
+        dest_board, dest_space_id = destination
+        print(f"{player_num=}, {origin_board=}, {origin_space_id=}, {dest_board=}, {dest_space_id=}")
+        
+        if origin == destination:
+            return
+        if origin_board == 4 or dest_board == 4:
+            return
+        if self.board is None:
+            return
+        
+        origin_space = self.board.find_space(origin_board, origin_space_id)
+        if not origin_space:
+            return
+        import pprint
+        print("origin space:")
+        pprint.pp(origin_space.__dict__)
+        print()
+
+        dest_space = self.board.find_space(dest_board, dest_space_id)
+        if not dest_space:
+            return
+        print("Dest space:")
+        pprint.pp(dest_space.__dict__)
+        print()
+        
+        piece = origin_space.piece
+        if not piece:
+            return
+        if piece.value == pieces_mod.LANDMINE or piece.value == pieces_mod.FLAG:
+            return
+        elif piece.value != pieces_mod.ENGINEER:
+            print("Single space search")
+            if not origin_space.space_is_linked(dest_space):
+                print("Single space search failed.")
+                return
+        else:
+            print("Single space search")
+            if not origin_space.space_is_linked(dest_space):
+                print("Single space search failed.")
+            def search_linkages(space:Space, dest:Space, visited:list = [], bypass:bool = False):
+                print("Searching space:")
+                pprint.pp(space.__dict__)
+                if space in visited:
+                    return False
+                visited.append(space)
+                if space == dest:
+                    return True
+                if not bypass and space.piece:
+                    return False
+                return any([search_linkages(new_space, dest, visited=visited) for new_space in map(lambda x:x[0], filter(lambda x:x[1] == spaces_mod.RAIL_LINKAGE, space.linkages))])
+            print("multi space search")
+            if not search_linkages(origin_space, dest_space, bypass=True):
+                print("multi space search failed.")
+                return
+            
+        
+        
+        
+        dest_piece = dest_space.piece
+        if dest_piece:
+            if dest_piece.owner == piece.owner:
+                return
+        
+        origin_space.piece = None
+        if dest_piece is None:
+            dest_space.piece = piece
+            origin_space.piece = None
+            
+        elif dest_piece.value == pieces_mod.FLAG:
+            #WIN/LOSE SEQUENCE
+            self.state = END
+            return
+        
+        elif piece.value == pieces_mod.BOMB:
+            dest_space.piece = None
+        
+        elif piece.value < 10 and dest_piece.value < 10:
+            if piece.value == dest_piece.value:
+                dest_space.piece = None
+            elif dest_piece.value < piece.value:
+                dest_space.piece = piece
+        
+        elif dest_piece.value == pieces_mod.LANDMINE:
+            if piece.value == pieces_mod.ENGINEER:
+                dest_space.piece = piece
+            else:
+                dest_space.piece = None
+        
+        elif dest_piece.value == pieces_mod.BOMB:
+            dest_space.piece = None
+        
+        else:
+            print("PIECE NOT RECOGNIZED????")
+            return
+        
+        self.turn = 3 - self.turn
+        
+        
+            
+        
+
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
 
     def get(self, player_num:int) -> dict:
         state = self.players_info[player_num]["state"]

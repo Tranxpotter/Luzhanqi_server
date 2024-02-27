@@ -75,6 +75,9 @@ async def handler(conn:websockets.WebSocketServerProtocol):
                 elif action == "ready":
                     joined_game.ready(player_num)
 
+                elif action == "play":
+                    joined_game.play(player_num, data["origin"], data["destination"])
+                
                 else:
                     await conn.send(json.dumps({}))
     
