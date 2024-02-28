@@ -121,6 +121,8 @@ class Game:
         if dest_piece:
             if dest_piece.owner == piece.owner:
                 return
+            elif dest_space.type == spaces_mod.CAMPSITE:
+                return
         
         origin_space.piece = None
         if dest_piece is None:
