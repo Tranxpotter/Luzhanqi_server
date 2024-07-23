@@ -98,21 +98,21 @@ class Game:
             print("Single space search")
             if not origin_space.space_is_linked(dest_space):
                 print("Single space search failed.")
-            def search_linkages(space:Space, dest:Space, visited:list = [], bypass:bool = False):
-                print("Searching space:")
-                pprint.pp(space.__dict__)
-                if space in visited:
-                    return False
-                visited.append(space)
-                if space == dest:
-                    return True
-                if not bypass and space.piece:
-                    return False
-                return any([search_linkages(new_space, dest, visited=visited) for new_space in map(lambda x:x[0], filter(lambda x:x[1] == spaces_mod.RAIL_LINKAGE, space.linkages))])
-            print("multi space search")
-            if not search_linkages(origin_space, dest_space, bypass=True):
-                print("multi space search failed.")
-                return
+                def search_linkages(space:Space, dest:Space, visited:list = [], bypass:bool = False):
+                    print("Searching space:")
+                    pprint.pp(space.__dict__)
+                    if space in visited:
+                        return False
+                    visited.append(space)
+                    if space == dest:
+                        return True
+                    if not bypass and space.piece:
+                        return False
+                    return any([search_linkages(new_space, dest, visited=visited) for new_space in map(lambda x:x[0], filter(lambda x:x[1] == spaces_mod.RAIL_LINKAGE, space.linkages))])
+                print("multi space search")
+                if not search_linkages(origin_space, dest_space, bypass=True):
+                    print("multi space search failed.")
+                    return
             
         
         
